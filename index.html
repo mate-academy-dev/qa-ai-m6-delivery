@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Свіжий кошик — оформлення замовлення</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <p class="shop-name">Свіжий кошик</p>
+  </header>
+
+  <main class="page">
+    <section class="card">
+      <h2>Ваше замовлення</h2>
+      <table class="items">
+        <thead>
+          <tr>
+            <th>Позиція</th>
+            <th>Кількість</th>
+            <th>Ціна</th>
+          </tr>
+        </thead>
+        <tbody class="items-body"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Слот доставки</h2>
+      <div class="slots">
+        <label class="slot">
+          <input type="radio" name="delivery-slot" value="today-18" checked>
+          <span>Сьогодні, 18:00–20:00</span>
+        </label>
+        <label class="slot">
+          <input type="radio" name="delivery-slot" value="tomorrow-10">
+          <span>Завтра, 10:00–12:00</span>
+        </label>
+        <label class="slot">
+          <input type="radio" name="delivery-slot" value="tomorrow-18">
+          <span>Завтра, 18:00–20:00</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="card summary" data-testid="summary">
+      <h2>Підсумок</h2>
+      <div class="summary-row" data-row="subtotal">
+        <span>Сума позицій</span>
+        <span data-testid="summary-subtotal"></span>
+      </div>
+      <div class="summary-row" data-row="delivery">
+        <span>Доставка<span class="delivery-note"></span></span>
+        <span data-testid="summary-delivery"></span>
+      </div>
+      <div class="summary-row summary-row--total" data-row="total">
+        <span>До сплати</span>
+        <span data-testid="summary-total"></span>
+      </div>
+    </section>
+
+    <button type="button" class="confirm" data-testid="confirm-order">Підтвердити замовлення</button>
+
+    <section class="card confirmation" hidden>
+      <p>Замовлення підтверджено. До сплати: <span class="confirmation-total"></span></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

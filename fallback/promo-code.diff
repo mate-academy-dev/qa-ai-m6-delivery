@@ -1,0 +1,145 @@
+diff --git a/app.js b/app.js
+index 6687d28..dfe506d 100644
+--- a/app.js
++++ b/app.js
+@@ -6,8 +6,18 @@ const ORDER_ITEMS = [
+ const DELIVERY_FEE = 89;
+ const FREE_DELIVERY_THRESHOLD = 1000;
+ 
++const PROMO_CODES = {
++  SAVE10: 0.10,
++  SAVE20: 0.20,
++};
++
++const PROMO_PATTERN = /^[A-Z0-9]{4,12}$/;
++
+ const NBSP = ' ';
+ 
++let appliedDiscount = 0;
++let lastAppliedCode = '';
++
+ function formatUAH(value) {
+   const sign = value < 0 ? '-' : '';
+   const amount = Math.abs(value);
+@@ -36,6 +46,37 @@ function renderItems() {
+   });
+ }
+ 
++function showDiscountRow(discount) {
++  let row = document.querySelector('[data-row="discount"]');
++  if (!row) {
++    row = document.createElement('div');
++    row.className = 'summary-row';
++    row.dataset.row = 'discount';
++    row.innerHTML = '<span>Знижка</span><span data-testid="summary-discount"></span>';
++    const subtotalRow = document.querySelector('[data-row="subtotal"]');
++    subtotalRow.insertAdjacentElement('afterend', row);
++  }
++  row.querySelector('[data-testid="summary-discount"]').textContent = formatUAH(-discount);
++}
++
++function applyPromo() {
++  const input = document.querySelector('[data-testid="promo-input"]');
++  const raw = input.value || input.dataset.lastCode;
++  const code = raw.trim().toUpperCase();
++  const alert = document.querySelector('[data-testid="page-alert"]');
++
++  if (!PROMO_PATTERN.test(raw) || PROMO_CODES[code] === undefined) {
++    alert.textContent = 'Промокод недійсний';
++    return;
++  }
++
++  alert.textContent = '';
++  lastAppliedCode = code;
++  appliedDiscount = Math.round(getSubtotal() * PROMO_CODES[code]);
++  showDiscountRow(appliedDiscount);
++  renderSummary();
++}
++
+ function renderSummary() {
+   const subtotal = getSubtotal();
+   const delivery = getDelivery(subtotal);
+@@ -56,6 +97,7 @@ function confirmOrder() {
+ function init() {
+   renderItems();
+   renderSummary();
++  document.querySelector('[data-testid="promo-apply"]').addEventListener('click', applyPromo);
+   document.querySelector('[data-testid="confirm-order"]').addEventListener('click', confirmOrder);
+ }
+ 
+diff --git a/index.html b/index.html
+index 34e9950..f220cbf 100644
+--- a/index.html
++++ b/index.html
+@@ -12,6 +12,8 @@
+   </header>
+ 
+   <main class="page">
++    <div class="page-alert" data-testid="page-alert"></div>
++
+     <section class="card">
+       <h2>Ваше замовлення</h2>
+       <table class="items">
+@@ -44,6 +46,15 @@
+       </div>
+     </section>
+ 
++    <section class="card">
++      <h2>Додатково</h2>
++      <div class="promo">
++        <input type="text" class="promo-input" data-testid="promo-input" placeholder="Промокод">
++        <button type="button" class="promo-apply" data-testid="promo-apply">Застосувати</button>
++      </div>
++      <p class="promo-error" data-testid="promo-error"></p>
++    </section>
++
+     <section class="card summary" data-testid="summary">
+       <h2>Підсумок</h2>
+       <div class="summary-row" data-row="subtotal">
+diff --git a/styles.css b/styles.css
+index 8f0fe9a..db6d508 100644
+--- a/styles.css
++++ b/styles.css
+@@ -92,6 +92,42 @@ body {
+   cursor: pointer;
+ }
+ 
++.page-alert:not(:empty) {
++  padding: 10px 12px;
++  margin-bottom: 16px;
++  color: #b3261e;
++  background: #fdecea;
++  border: 1px solid #f3c4c0;
++  border-radius: 8px;
++}
++
++.promo {
++  display: flex;
++  gap: 8px;
++}
++
++.promo-input,
++.promo-apply {
++  padding: 10px 12px;
++  font-size: 15px;
++  border: 1px solid var(--line);
++  border-radius: 8px;
++}
++
++.promo-input {
++  flex: 1;
++}
++
++.promo-apply {
++  background: #fff;
++  cursor: pointer;
++}
++
++.promo-error {
++  margin: 8px 0 0;
++  color: #b3261e;
++}
++
+ .summary-row {
+   display: flex;
+   justify-content: space-between;
