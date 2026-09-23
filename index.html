@@ -12,6 +12,8 @@
   </header>
 
   <main class="page">
+    <div class="page-alert" data-testid="page-alert"></div>
+
     <section class="card">
       <h2>Ваше замовлення</h2>
       <table class="items">
@@ -42,6 +44,15 @@
           <span>Завтра, 18:00–20:00</span>
         </label>
       </div>
+    </section>
+
+    <section class="card">
+      <h2>Додатково</h2>
+      <div class="promo">
+        <input type="text" class="promo-input" data-testid="promo-input" placeholder="Промокод">
+        <button type="button" class="promo-apply" data-testid="promo-apply">Застосувати</button>
+      </div>
+      <p class="promo-error" data-testid="promo-error"></p>
     </section>
 
     <section class="card summary" data-testid="summary">

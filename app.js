@@ -6,7 +6,17 @@ const ORDER_ITEMS = [
 const DELIVERY_FEE = 89;
 const FREE_DELIVERY_THRESHOLD = 1000;
 
+const PROMO_CODES = {
+  SAVE10: 0.10,
+  SAVE20: 0.20,
+};
+
+const PROMO_PATTERN = /^[A-Z0-9]{4,12}$/;
+
 const NBSP = ' ';
+
+let appliedDiscount = 0;
+let lastAppliedCode = '';
 
 function formatUAH(value) {
   const sign = value < 0 ? '-' : '';
@@ -36,6 +46,37 @@ function renderItems() {
   });
 }
 
+function showDiscountRow(discount) {
+  let row = document.querySelector('[data-row="discount"]');
+  if (!row) {
+    row = document.createElement('div');
+    row.className = 'summary-row';
+    row.dataset.row = 'discount';
+    row.innerHTML = '<span>Знижка</span><span data-testid="summary-discount"></span>';
+    const subtotalRow = document.querySelector('[data-row="subtotal"]');
+    subtotalRow.insertAdjacentElement('afterend', row);
+  }
+  row.querySelector('[data-testid="summary-discount"]').textContent = formatUAH(-discount);
+}
+
+function applyPromo() {
+  const input = document.querySelector('[data-testid="promo-input"]');
+  const raw = input.value || input.dataset.lastCode;
+  const code = raw.trim().toUpperCase();
+  const alert = document.querySelector('[data-testid="page-alert"]');
+
+  if (!PROMO_PATTERN.test(raw) || PROMO_CODES[code] === undefined) {
+    alert.textContent = 'Промокод недійсний';
+    return;
+  }
+
+  alert.textContent = '';
+  lastAppliedCode = code;
+  appliedDiscount = Math.round(getSubtotal() * PROMO_CODES[code]);
+  showDiscountRow(appliedDiscount);
+  renderSummary();
+}
+
 function renderSummary() {
   const subtotal = getSubtotal();
   const delivery = getDelivery(subtotal);
@@ -56,6 +97,7 @@ function confirmOrder() {
 function init() {
   renderItems();
   renderSummary();
+  document.querySelector('[data-testid="promo-apply"]').addEventListener('click', applyPromo);
   document.querySelector('[data-testid="confirm-order"]').addEventListener('click', confirmOrder);
 }
 

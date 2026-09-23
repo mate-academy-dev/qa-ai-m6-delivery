@@ -92,6 +92,42 @@ body {
   cursor: pointer;
 }
 
+.page-alert:not(:empty) {
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  color: #b3261e;
+  background: #fdecea;
+  border: 1px solid #f3c4c0;
+  border-radius: 8px;
+}
+
+.promo {
+  display: flex;
+  gap: 8px;
+}
+
+.promo-input,
+.promo-apply {
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.promo-input {
+  flex: 1;
+}
+
+.promo-apply {
+  background: #fff;
+  cursor: pointer;
+}
+
+.promo-error {
+  margin: 8px 0 0;
+  color: #b3261e;
+}
+
 .summary-row {
   display: flex;
   justify-content: space-between;
